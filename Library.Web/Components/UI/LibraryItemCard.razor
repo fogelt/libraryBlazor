@@ -1,0 +1,52 @@
+@using Library.Core.Models.Items
+
+<div class="card h-100 glass-card border-0">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <span class="badge rounded-pill bg-white text-dark opacity-75">
+        @Item.GetType().Name
+      </span>
+      <div class="rounded-circle @(Item.IsAvailable ? "bg-success" : "bg-danger") shadow-sm"
+           style="width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.5);"
+           title="@(Item.IsAvailable ? "Available" : "Borrowed")">
+      </div>
+    </div>
+
+    <h5 class="card-title fw-bold">@Item.Title</h5>
+    <h6 class="card-subtitle mb-3 opacity-75">@Item.Author • @Item.PublishedYear</h6>
+
+    <div class="small opacity-50">
+      @if (Item is DVD d)
+      {
+        <span><i class="bi bi-clock"></i> @(d.DurationInSeconds / 60) mins</span>
+      }
+      else if (Item is Magazine m)
+      {
+        <span>Issue #@m.IssueNumber</span>
+      }
+      else if (Item is Book b)
+      {
+        <span>@b.NumberOfPages Pages</span>
+      }
+    </div>
+  </div>
+
+  <div class="card-footer bg-transparent border-0 pb-4">
+    <button class="btn btn-sm w-100 btn-light" @onclick="HandleClick">
+      See details
+    </button>
+  </div>
+</div>
+
+@code {
+  [Parameter][EditorRequired] public LibraryItem Item { get; set; } = default!;
+  [Parameter] public EventCallback<LibraryItem> OnPressed { get; set; }
+
+  private async Task HandleClick()
+  {
+    if (OnPressed.HasDelegate)
+    {
+      await OnPressed.InvokeAsync(Item);
+    }
+  }
+}

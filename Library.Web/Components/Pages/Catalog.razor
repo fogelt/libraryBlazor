@@ -2,6 +2,7 @@
 @page "/catalog"
 @using Library.Core.Models.Items
 @using Library.Web.Services
+@using Library.Web.Components.UI
 @inject LibraryService LibraryService
 
 <PageTitle>Library Catalog</PageTitle>
@@ -26,41 +27,7 @@ else
     @foreach (var item in items)
     {
       <div class="col-md-4">
-        <div class="card h-100 glass-card border-0">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <span class="badge rounded-pill bg-white text-dark opacity-75">@item.GetType().Name</span>
-              <div class="rounded-circle @(item.IsAvailable ? "bg-success" : "bg-danger") shadow-sm"
-                   style="width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.5);"
-                   title="@(item.IsAvailable ? "Available" : "Borrowed")">
-              </div>
-            </div>
-
-            <h5 class="card-title fw-bold">@item.Title</h5>
-            <h6 class="card-subtitle mb-3 opacity-75">@item.Author • @item.PublishedYear</h6>
-
-            <div class="small opacity-50">
-              @if (item is DVD d)
-              {
-                <span><i class="bi bi-clock"></i> @(d.DurationInSeconds / 60) mins</span>
-              }
-              else if (item is Magazine m)
-              {
-                <span>Issue #@m.IssueNumber</span>
-              }
-              else if (item is Book b)
-              {
-                <span>@b.NumberOfPages Pages</span>
-              }
-            </div>
-          </div>
-          <div class="card-footer bg-transparent border-0 pb-4">
-            <button class="btn btn-sm w-100 @(item.IsAvailable ? "btn-light" : "btn-outline-light opacity-50")"
-                    disabled="@(!item.IsAvailable)">
-              @(item.IsAvailable ? "Borrow Now" : "Currently Out")
-            </button>
-          </div>
-        </div>
+        <LibraryItemCard Item="item" OnPressed="HandlePressed" />
       </div>
     }
   </div>
@@ -68,20 +35,12 @@ else
 
 @code {
   private List<LibraryItem>? items;
-  private (int Total, int Loaned, string MVP) stats;
   private string searchTerm = "";
 
   protected override async Task OnInitializedAsync()
   {
-    await LoadData();
-  }
-
-  private async Task LoadData()
-  {
     items = await LibraryService.GetAllItemsAsync();
-    stats = await LibraryService.GetStatisticsAsync();
   }
-
   private async Task OnSearchInput(ChangeEventArgs e)
   {
     // If searchbar is empty fetch from DB, All Library items searchable with built in 'Matches'
@@ -96,5 +55,10 @@ else
     {
       items = items.Where(i => i.Matches(searchTerm)).ToList();
     }
+  }
+
+  private void HandlePressed(LibraryItem item)
+  {
+    Console.WriteLine($"User wants to see: {item.Title}");
   }
 }
