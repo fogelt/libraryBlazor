@@ -56,13 +56,20 @@ else
     @foreach (LibraryItem item in DisplayItems)
     {
       <div class="col-md-4">
-        <LibraryItemCard Item="item" OnPressed="HandlePressed" />
+        <LibraryItemCard Item="item" OnPressed="OpenModal" />
       </div>
     }
   </div>
 }
 
+@if (selectedItem != null)
+{
+  <LibraryItemModal Item="selectedItem" OnClose="CloseModal" />
+}
+
 @code {
+
+  private LibraryItem? selectedItem;
   private List<LibraryItem> allItems = new List<LibraryItem>();
   private string searchTerm = "";
   private string filterType = "All";
@@ -99,7 +106,8 @@ else
     allItems = await LibraryService.GetAllItemsAsync();
   }
 
-  private void HandlePressed() => Console.WriteLine("Pressed");
+  private void OpenModal(LibraryItem item) => selectedItem = item;
+  private void CloseModal() => selectedItem = null;
   private void OnSearchInput(ChangeEventArgs e) => searchTerm = e.Value?.ToString() ?? "";
   private void SetFilter(string type) => filterType = type;
   private void SetSort(string criteria) => sortBy = criteria;
