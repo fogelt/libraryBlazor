@@ -19,7 +19,9 @@
 <div class="glass-card p-4">
   @if (activeLoans == null)
   {
-    <div class="text-center opacity-50">Loading loans...</div>
+    <div class="text-center opacity-50 py-5">
+      <div class="spinner-border text-light opacity-25" role="status"></div>
+    </div>
   }
   else if (!activeLoans.Any())
   {
@@ -27,9 +29,14 @@
   }
   else
   {
-    <LoanTable Loans="activeLoans" OnReturnItem="HandleReturn" />
+    <LoanTable Loans="pagedLoans.ToList()" OnReturnItem="HandleReturn" />
   }
 </div>
+
+@if (totalPages > 1)
+{
+  <Pagination CurrentPage="currentPage" TotalPages="totalPages" OnPageChanged="(page) => currentPage = page" />
+}
 
 @if (showModal)
 {
@@ -38,24 +45,35 @@
 
 @code {
   private List<Loan>? activeLoans;
-  private List<Member> allMembers = new List<Member>();
-  private List<LibraryItem> allItems = new List<LibraryItem>();
+  private List<Member> allMembers = new();
+  private List<LibraryItem> allItems = new();
   private bool showModal = false;
 
+  // Pagination State
+  private int currentPage = 1;
+  private int pageSize = 4;
+
+  private IEnumerable<Loan> pagedLoans => activeLoans?
+      .Skip((currentPage - 1) * pageSize)
+      .Take(pageSize) ?? Enumerable.Empty<Loan>();
+
+  private int totalPages => activeLoans == null ? 0 : (int)Math.Ceiling((double)activeLoans.Count / pageSize);
+
   protected override async Task OnInitializedAsync() => await RefreshData();
+
   private async Task RefreshData()
   {
     allMembers = await LibraryService.GetAllMembersAsync();
     allItems = await LibraryService.GetAllItemsAsync();
     activeLoans = await LibraryService.GetAllLoansAsync();
 
+    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
     StateHasChanged();
   }
 
   private async Task HandleReturn(string loanId)
   {
-    bool success = await LibraryService.ReturnItemAsync(loanId);
-    if (success)
+    if (await LibraryService.ReturnItemAsync(loanId))
     {
       await RefreshData();
     }

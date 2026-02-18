@@ -1,0 +1,24 @@
+<div class="d-flex justify-content-center align-items-center gap-3 mt-5">
+  <button class="btn btn-sm glass-card text-white px-3 @(CurrentPage == 1 ? "opacity-25" : "hover-opacity-100")"
+          disabled="@(CurrentPage == 1)" @onclick="() => OnPageChanged.InvokeAsync(CurrentPage - 1)">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+
+  <div class="px-4 py-1 border-white border-opacity-10">
+    <span class="text-white opacity-75 small uppercase fw-bold" style="letter-spacing: 0.1em;">
+      Page @CurrentPage of @TotalPages
+    </span>
+  </div>
+
+  <button
+    class="btn btn-sm glass-card text-white px-3 @(CurrentPage == TotalPages ? "opacity-25" : "hover-opacity-100")"
+    disabled="@(CurrentPage == TotalPages)" @onclick="() => OnPageChanged.InvokeAsync(CurrentPage + 1)">
+    <i class="bi bi-chevron-right"></i>
+  </button>
+</div>
+
+@code {
+  [Parameter] public int CurrentPage { get; set; }
+  [Parameter] public int TotalPages { get; set; }
+  [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+}
