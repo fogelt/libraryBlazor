@@ -53,12 +53,12 @@
                 }
                 else
                 {
-                  <div class="list-group list-group-flush">
+                  <div class="list-group list-group-flush gap-2 overflow-auto" style="height: 140px;">
                     @foreach (Loan loan in Member.Loans)
                     {
                       @if (!loan.IsReturned)
                       {
-                        <div class="list-group-item glass-card text-white d-flex justify-content-between align-items-center">
+                        <div class="list-group-item glass-card text-white d-flex justify-content-between align-items-center me-2">
                           <div>
                             <div class="fw-bold">@loan.Item.Title</div>
                             <small class="opacity-50">Due: @loan.DueDate.ToShortDateString()</small>
