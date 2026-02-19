@@ -8,7 +8,7 @@
 
 <PageTitle>@(item?.Title ?? "Loading...")</PageTitle>
 
-<div class="container mt-4">
+<div class="container p-4">
   <button class="btn btn-sm text-white opacity-50 hover-opacity-100 mb-3 p-0 border-0 shadow-none" @onclick="GoBack"
           style="outline: none;">
     <i class="bi bi-arrow-left me-2"></i>Back to Catalog
@@ -22,10 +22,10 @@
   }
   else
   {
-    <div class="glass-card p-4 border-white border-opacity-10 shadow-lg">
+    <div class="glass-card p-4 shadow-lg">
       <div class="row g-4 align-items-stretch">
 
-        <div class="col-md-3">
+        <div class="col-md-3 d-flex flex justify-content-center">
           @if (!string.IsNullOrEmpty(item.ImageUrl))
           {
             <img src="@item.ImageUrl" class="rounded shadow-lg img-fluid border border-white border-opacity-10"
@@ -35,7 +35,7 @@
           {
             <div
               class="rounded bg-white bg-opacity-10 d-flex align-items-center justify-content-center border border-white border-opacity-10"
-              style="aspect-ratio: 3/4; font-size: 3rem;">
+              style="aspect-ratio: 3/4; font-size: 3rem; max-height: 40px;">
               <i class="bi bi-book opacity-25 text-white"></i>
             </div>
           }
@@ -47,7 +47,7 @@
               @item.Title
             </h2>
             <p class="opacity-50 mb-0">by @item.Author</p>
-            <p class="opacity-50 mb-0" style="font-size: 10px">@item.ISBN</p>
+            <p class="opacity-25 mb-0" style="font-size: 10px">ISBN: @item.ISBN</p>
           </div>
 
           <div class="d-flex flex-wrap gap-2 mb-4">
@@ -57,25 +57,9 @@
               <span class="small fw-light opacity-75">@item.PublishedYear</span>
             </div>
 
-            @if (!item.IsAvailable)
-            {
-              <span
-                class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 d-flex align-items-center justify-content-center"
-                style="font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700;">
-                Out of Stock
-              </span>
-            }
-            else
-            {
-              <span
-                class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 d-flex align-items-center justify-content-center"
-                style="font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700;">
-                In Stock
-              </span>
-            }
           </div>
 
-          <p class="small opacity-75 mb-4" style="max-width: 600px; line-height: 1.6;">
+          <p class="small opacity-50 mb-4" style="line-height: 1.6;">
             @item.Description
           </p>
 
