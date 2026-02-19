@@ -44,6 +44,8 @@ dotnet test
 
 The system uses SQLite with the following main entities:
 
+![Database structure](Library.Web/wwwroot/images/screenshots/DBtables.png)
+
 - **LibraryItem**: Base class for Books, DVDs, and Magazines with properties like Title, Author, ISBN, Availability
 - **Member**: Represents library members with name and contact information
 - **Loan**: Tracks borrowed items with borrow date, due date, and return date
