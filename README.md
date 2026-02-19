@@ -51,6 +51,7 @@ The system uses SQLite with the following main entities:
 - **Loan**: Tracks borrowed items with borrow date, due date, and return date
 
 The database is automatically created and seeded with sample data on first run.
+(example library.db is included in the repo)
 
 ## Screenshots
 
