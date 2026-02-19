@@ -1,6 +1,7 @@
 using Library.Data.Repositories;
 using Library.Data;
 using Library.Core.Models.Items;
+using Library.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
@@ -113,5 +114,29 @@ public class GenericRepositoryTests
 
     var exception = await Record.ExceptionAsync(() => repository.DeleteAsync("non-existent-id"));
     Assert.Null(exception);
+  }
+
+  [Fact]
+  public async Task GetAllAsync_WithIncludes_ShouldLoadRelatedData()
+  {
+    var factory = CreateFactory("IncludeDb");
+    var context = factory.CreateDbContext();
+
+    var member = new Member("M1", "Alice", "alice@test.com", DateTime.Now, 0);
+    var item = new Book("B1", "Included Book", "Author", 100, 2020);
+    var loan = new Loan { Id = "L1", MemberId = "M1", ItemISBN = "B1", Member = member, Item = item };
+
+    context.Members.Add(member);
+    context.Books.Add(item);
+    context.Loans.Add(loan);
+    await context.SaveChangesAsync();
+
+    var repository = new GenericRepository<Loan>(factory);
+
+    var results = await repository.GetAllAsync("Member");
+
+    var savedLoan = results.First();
+    Assert.NotNull(savedLoan.Member);
+    Assert.Equal("Alice", savedLoan.Member.Name);
   }
 }
