@@ -1,0 +1,163 @@
+@using Library.Core.DTOs
+@using Library.Core.Models.Items
+@using Library.Web.Services
+@using System.ComponentModel.DataAnnotations
+@inject LibraryService LibraryService
+
+<div class="modal fade show d-block" 
+     style="background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); z-index: 9999; overflow-y: auto;" 
+     tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered" style="z-index: 10000;">
+        <div class="glass-card border-white border-opacity-10 shadow-lg p-0 overflow-hidden w-100" 
+             style="pointer-events: all;">
+
+            <div class="p-4 border-bottom border-white border-opacity-10 d-flex justify-content-between align-items-center">
+                <h4 class="text-white fw-bold opacity-50 m-0"><i class="bi bi-plus-circle me-2"></i>Add to Collection</h4>
+                <button type="button" class="btn-close btn-close-white opacity-50 shadow-none focus-none" @onclick="OnClose"></button>
+            </div>
+
+            <EditForm Model="newItem" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+
+                <div class="row g-0">
+                    @* Left Side: Image Preview *@
+                    <div class="col-md-4 d-flex align-items-center justify-content-center p-4">
+                        @if (!string.IsNullOrEmpty(newItem.ImageUrl))
+                        {
+                            <img src="@newItem.ImageUrl" class="rounded shadow-lg img-fluid"
+                                 style="max-height: 300px; object-fit: cover;" @onerror='() => newItem.ImageUrl = ""' />
+                        }
+                        else
+                        {
+                            <div class="text-center opacity-25 text-white">
+                                <i class="bi bi-image" style="font-size: 4rem;"></i>
+                                <p class="small mt-2">Image Preview</p>
+                            </div>
+                        }
+                    </div>
+
+                    @* Right Side: Form *@
+                    <div class="col-md-8 p-4">
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger bg-danger bg-opacity-10 border-danger border-opacity-25 text-danger small py-2 mb-3">
+                                <i class="bi bi-exclamation-triangle me-2"></i>@errorMessage
+                            </div>
+                        }
+
+                        <div class="row g-3 text-white">
+                            @* Category Dropdown *@
+                            <div class="col-md-6">
+                                <label class="form-label opacity-50 small fw-bold text-uppercase mb-2 d-block">Item Category</label>
+                                <div class="dropdown w-100">
+                                    <button class="glass-card dropdown-toggle px-3 py-2 w-100 text-start d-flex justify-content-between align-items-center shadow-none"
+                                            type="button" data-bs-toggle="dropdown" style="border: 1px solid #444 !important;">
+                                        <span>
+                                            <i class="bi @(GetCategoryIcon()) me-2 opacity-50"></i> 
+                                            @itemType
+                                        </span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-dark glass-card border-white border-opacity-10 shadow-lg w-100">
+                                        <li><a class="dropdown-item py-2 opacity-50 hover-opacity-100 cursor-pointer" @onclick='() => itemType = "Book"'>Book</a></li>
+                                        <li><a class="dropdown-item py-2 opacity-50 hover-opacity-100 cursor-pointer" @onclick='() => itemType = "DVD"'>DVD</a></li>
+                                        <li><a class="dropdown-item py-2 opacity-50 hover-opacity-100 cursor-pointer" @onclick='() => itemType = "Magazine"'>Magazine</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            @* ISBN *@
+                            <div class="col-md-6">
+                                <label class="small opacity-50 mb-1">ISBN / Identifier</label>
+                                <InputText @bind-Value="newItem.ISBN" class="form-control glass-input py-1 shadow-none" placeholder="e.g. 978-01..." />
+                                <ValidationMessage For="@(() => newItem.ISBN)" class="text-danger small" />
+                            </div>
+
+                            @* Title *@
+                            <div class="col-12">
+                                <label class="small opacity-50 mb-1">Title</label>
+                                <InputText @bind-Value="newItem.Title" class="form-control glass-input py-1 shadow-none" placeholder="Enter title..." />
+                                <ValidationMessage For="@(() => newItem.Title)" class="text-danger small" />
+                            </div>
+
+                            @* Author *@
+                            <div class="col-md-6">
+                                <label class="small opacity-50 mb-1">Author / Creator</label>
+                                <InputText @bind-Value="newItem.Author" class="form-control glass-input py-1 shadow-none" placeholder="Name" />
+                                <ValidationMessage For="@(() => newItem.Author)" class="text-danger small" />
+                            </div>
+
+                            @* Year *@
+                            <div class="col-md-3">
+                                <label class="small opacity-50 mb-1">Year</label>
+                                <InputNumber @bind-Value="newItem.PublishedYear" class="form-control glass-input py-1 shadow-none no-spinners" />
+                                <ValidationMessage For="@(() => newItem.PublishedYear)" class="text-danger small" />
+                            </div>
+
+                            @* Special Metric *@
+                            <div class="col-md-3">
+                                <label class="small opacity-50 mb-1">
+                                    @(itemType == "Book" ? "Pages" : itemType == "DVD" ? "Seconds" : "Issue #")
+                                </label>
+                                <InputNumber @bind-Value="newItem.SpecialMetric" class="form-control glass-input py-1 shadow-none no-spinners" />
+                            </div>
+
+                            @* Image URL *@
+                            <div class="col-12">
+                                <label class="small opacity-50 mb-1">Cover Image URL</label>
+                                <InputText @bind-Value="newItem.ImageUrl" class="form-control glass-input py-1 shadow-none" placeholder="https://..." />
+                                <ValidationMessage For="@(() => newItem.ImageUrl)" class="text-danger small" />
+                            </div>
+
+                            @* Description *@
+                            <div class="col-12">
+                                <label class="small opacity-50 mb-1">Description</label>
+                                <InputTextArea @bind-Value="newItem.Description" 
+                                               class="form-control glass-input py-1 shadow-none no-resize" 
+                                               rows="3" placeholder="Write a short summary..." />
+                                <ValidationMessage For="@(() => newItem.Description)" class="text-danger small" />
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn glass-card px-4 flex-grow-1">
+                                <i class="bi bi-check2-circle me-2"></i>Create Item
+                            </button>
+                            <button type="button" class="btn glass-card px-4" @onclick="OnClose">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnSave { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private string itemType = "Book";
+    private string? errorMessage;
+    private LibraryItemDto newItem = new LibraryItemDto();
+
+    private string GetCategoryIcon() => itemType switch
+    {
+        "DVD" => "bi-film",
+        "Magazine" => "bi-newspaper",
+        _ => "bi-book"
+    };
+
+  private async Task HandleSubmit()
+  {
+    errorMessage = null;
+
+    bool success = await LibraryService.AddItemFromDtoAsync(newItem, itemType);
+
+    if (success)
+      await OnSave.InvokeAsync();
+    else
+      errorMessage = "This ISBN is already in use.";
+  }
+
+}

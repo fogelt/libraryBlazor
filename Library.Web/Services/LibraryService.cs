@@ -1,5 +1,6 @@
 using Library.Core.Models;
 using Library.Core.Models.Items;
+using Library.Core.DTOs;
 using Library.Core.Interfaces;
 
 namespace Library.Web.Services;
@@ -68,6 +69,39 @@ public class LibraryService(
     //LibraryItem functions
     public async Task<List<LibraryItem>> GetAllItemsAsync() => [.. (await itemRepo.GetAllAsync()).OrderBy(i => i.Title)];
     public async Task<LibraryItem?> GetLibraryItemAsync(string id) => await itemRepo.GetByIdAsync(id);
+
+    public async Task<bool> AddItemAsync(LibraryItem item)
+    {
+        var existing = await itemRepo.GetByIdAsync(item.ISBN);
+        if (existing != null) return false;
+
+        item.IsAvailable = true;
+
+        await itemRepo.AddAsync(item);
+        return true;
+    }
+
+    public async Task<bool> AddItemFromDtoAsync(LibraryItemDto dto, string itemType)
+    {
+        LibraryItem finalizedItem = itemType switch
+        {
+            "Book" => new Book(dto.ISBN, dto.Title, dto.Author, dto.SpecialMetric, dto.PublishedYear, dto.Description, dto.ImageUrl),
+            "DVD" => new DVD(dto.ISBN, dto.Title, dto.Author, dto.SpecialMetric, dto.PublishedYear, dto.Description, dto.ImageUrl),
+            "Magazine" => new Magazine(dto.ISBN, dto.Title, dto.Author, dto.SpecialMetric, dto.PublishedYear, dto.Description, dto.ImageUrl),
+            _ => throw new ArgumentException("Invalid item type")
+        };
+
+        return await AddItemAsync(finalizedItem);
+    }
+
+    public async Task<bool> DeleteItemAsync(string isbn)
+    {
+        var item = await itemRepo.GetByIdAsync(isbn);
+        if (item == null || !item.IsAvailable) return false;
+
+        await itemRepo.DeleteAsync(isbn);
+        return true;
+    }
 
     //Global stats
     public async Task<(int Total, int Loaned, string MVP)> GetStatisticsAsync()

@@ -32,7 +32,8 @@
     @onclick='() => SetFilter("Magazine")'>Magazines</button>
   </div>
 
-  <button class="btn btn-sm glass-card text-white px-4 py-2 border-white border-opacity-10 shadow-sm">
+  <button class="btn btn-sm glass-card text-white px-4 py-2 border-white border-opacity-10 shadow-sm"
+          @onclick="() => showCreateModal = true">
     <i class="bi bi-bag-plus me-2"></i> Add Item
   </button>
 
@@ -71,7 +72,13 @@ else
   <Pagination CurrentPage="currentPage" TotalPages="totalPages" OnPageChanged="HandlePageChange" />
 }
 
+@if (showCreateModal)
+{
+  <AddItemModal OnClose="() => showCreateModal = false" OnSave="HandleItemSaved" />
+}
+
 @code {
+  private bool showCreateModal = false;
   private List<LibraryItem> allItems = new List<LibraryItem>();
   private string searchTerm = "";
   private string filterType = "All";
@@ -85,7 +92,7 @@ else
   {
     get
     {
-      var result = allItems.AsEnumerable();
+      IEnumerable<LibraryItem>? result = allItems.AsEnumerable();
 
       if (filterType != "All")
         result = result.Where(i => i.GetType().Name == filterType);
@@ -111,6 +118,17 @@ else
   protected override async Task OnInitializedAsync()
   {
     allItems = await LibraryService.GetAllItemsAsync();
+  }
+
+  private async Task LoadItems()
+  {
+    allItems = await LibraryService.GetAllItemsAsync();
+  }
+  private async Task HandleItemSaved()
+  {
+    showCreateModal = false;
+    await LoadItems(); // Re-fetch from DB to show the new item
+    StateHasChanged(); // Force UI update
   }
 
   // --- Methods with Page Resets ---
