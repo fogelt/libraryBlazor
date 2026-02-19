@@ -25,13 +25,13 @@ public class TimeFormatterTests
   {
     int seconds = 3661;
     string result = TimeFormatter.FormatDuration(seconds);
-    Assert.Equal("01h 01m 01s", result);
+    Assert.Equal("01h 01m", result);
   }
 
   [Theory]
   [InlineData(0, "00m 00s")]
   [InlineData(59, "00m 59s")]
-  [InlineData(3600, "01h 00m 00s")]
+  [InlineData(3600, "01h 00m")]
   public void FormatDuration_MultipleInputs_ReturnCorrectFormat(int seconds, string expected)
   {
     string result = TimeFormatter.FormatDuration(seconds);

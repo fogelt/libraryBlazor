@@ -13,7 +13,7 @@ public class SearchTests
   [InlineData("Rowling", false)]        // Not found
   public void Book_Matches_ShouldSearchAllFields(string searchTerm, bool expected)
   {
-    var book = new Book("123", "Sagan om ringen", "J.R.R. Tolkien", 1954);
+    var book = new Book("123", "Sagan om ringen", "J.R.R. Tolkien", 123, 1954);
     var result = book.Matches(searchTerm);
     Assert.Equal(expected, result);
   }

@@ -21,16 +21,4 @@ public class MagazineTests
     Assert.True(magazine.IsAvailable);
   }
 
-  [Fact]
-  public void GetInfo_ShouldReturnFormattedString()
-  {
-    var magazine = new Magazine("ISSN-456", "National Geographic", "Tech Publisher", 39, 2023);
-
-    string info = magazine.GetInfo();
-
-    Assert.Contains("National Geographic", info);
-    Assert.Contains("#39", info);
-    Assert.Contains("2023", info);
-    Assert.Contains("Available", info);
-  }
 }

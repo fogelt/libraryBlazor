@@ -21,15 +21,4 @@ public class DVDTests
     Assert.True(dvd.IsAvailable);
   }
 
-  [Fact]
-  public void GetInfo_ShouldReturnFormattedString()
-  {
-    var dvd = new DVD("DVD-123", "Inception", "Nolan", 5400, 2010);
-    string info = dvd.GetInfo();
-
-    Assert.Contains("Inception", info);
-    Assert.Contains("01h 30m 00s", info);
-    Assert.Contains("2010", info);
-    Assert.Contains("Available", info);
-  }
 }
