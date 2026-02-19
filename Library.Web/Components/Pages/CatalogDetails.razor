@@ -26,11 +26,19 @@
       <div class="row g-4 align-items-stretch">
 
         <div class="col-md-3">
-          <div
-            class="rounded bg-white bg-opacity-10 d-flex align-items-center justify-content-center border border-white border-opacity-10 h-100"
-            style="aspect-ratio: 3/4; font-size: 3rem;">
-            <i class="bi bi-book opacity-25 text-white"></i>
-          </div>
+          @if (!string.IsNullOrEmpty(item.ImageUrl))
+          {
+            <img src="@item.ImageUrl" class="rounded shadow-lg img-fluid border border-white border-opacity-10"
+                 alt="@item.Title" />
+          }
+          else
+          {
+            <div
+              class="rounded bg-white bg-opacity-10 d-flex align-items-center justify-content-center border border-white border-opacity-10"
+              style="aspect-ratio: 3/4; font-size: 3rem;">
+              <i class="bi bi-book opacity-25 text-white"></i>
+            </div>
+          }
         </div>
 
         <div class="col-md-9 text-white d-flex flex-column">
@@ -59,8 +67,7 @@
           </div>
 
           <p class="small opacity-75 mb-4" style="max-width: 600px; line-height: 1.6;">
-            This @item.GetType().Name.ToLower() is part of the curated library collection.
-            Produced by @item.Author in @item.PublishedYear.
+            @item.Description
           </p>
 
           <div class="mt-auto pt-3">
