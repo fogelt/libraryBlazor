@@ -60,8 +60,12 @@ else
   <div class="row g-4">
     @foreach (LibraryItem item in pagedItems)
     {
-      <div class="col-md-4">
+      <div class="col-md-4 position-relative">
         <LibraryItemCard Item="item" OnPressed="() => NavigateToDetails(item.ISBN)" />
+        <button class="btn btn-sm position-absolute top-0 end-0 glass-card" @onclick="() => DeleteItem(item)"
+                title="Delete">
+          <i class="bi bi-trash"></i>
+        </button>
       </div>
     }
   </div>
@@ -129,6 +133,11 @@ else
     showCreateModal = false;
     await LoadItems(); // Re-fetch from DB to show the new item
     StateHasChanged(); // Force UI update
+  }
+  private async Task DeleteItem(LibraryItem item)
+  {
+    await LibraryService.DeleteItemAsync(item.ISBN);
+    await LoadItems();
   }
 
   // --- Methods with Page Resets ---
