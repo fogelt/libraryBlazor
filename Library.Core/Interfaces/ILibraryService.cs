@@ -9,6 +9,7 @@ public interface ILibraryService
   // Membership
   Task<List<Member>> GetAllMembersAsync();
   Task AddMemberAsync(Member member);
+  Task AddMemberFromDtoAsync(AddMemberDto dto);
   Task DeleteMemberAsync(Member member);
 
   // Loans
@@ -20,7 +21,7 @@ public interface ILibraryService
   Task<List<LibraryItem>> GetAllItemsAsync();
   Task<LibraryItem?> GetLibraryItemAsync(string id);
   Task<bool> AddItemAsync(LibraryItem item);
-  Task<bool> AddItemFromDtoAsync(LibraryItemDto dto, string itemType);
+  Task<bool> AddItemFromDtoAsync(AddLibraryItemDto dto, string itemType);
   Task<bool> DeleteItemAsync(string isbn);
 
   // Stats

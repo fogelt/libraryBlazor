@@ -13,6 +13,18 @@ public class LibraryService(
     //Membership functions
     public async Task<List<Member>> GetAllMembersAsync() => [.. (await memberRepo.GetAllAsync("Loans.Item")).OrderBy(m => m.Name)];
     public async Task AddMemberAsync(Member member) => await memberRepo.AddAsync(member);
+    public async Task AddMemberFromDtoAsync(AddMemberDto dto)
+    {
+        var member = new Member(
+            dto.MemberId,
+            dto.Name,
+            dto.Email,
+            dto.MembershipDate,
+            dto.ActiveScore
+        );
+
+        await AddMemberAsync(member);
+    }
     public async Task DeleteMemberAsync(Member member) => await memberRepo.DeleteAsync(member.MemberId);
 
     //Loan functions
@@ -81,7 +93,7 @@ public class LibraryService(
         return true;
     }
 
-    public async Task<bool> AddItemFromDtoAsync(LibraryItemDto dto, string itemType)
+    public async Task<bool> AddItemFromDtoAsync(AddLibraryItemDto dto, string itemType)
     {
         LibraryItem finalizedItem = itemType switch
         {

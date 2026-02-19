@@ -27,7 +27,7 @@ public class AddItemModalTests : BunitContext
     var mockService = new Mock<ILibraryService>();
     bool saveTriggered = false;
 
-    mockService.Setup(s => s.AddItemFromDtoAsync(It.IsAny<LibraryItemDto>(), It.IsAny<string>()))
+    mockService.Setup(s => s.AddItemFromDtoAsync(It.IsAny<AddLibraryItemDto>(), It.IsAny<string>()))
                .ReturnsAsync(true);
 
     Services.AddSingleton(mockService.Object);
@@ -47,7 +47,7 @@ public class AddItemModalTests : BunitContext
     await cut.Find("form").SubmitAsync();
 
     mockService.Verify(s => s.AddItemFromDtoAsync(
-        It.Is<LibraryItemDto>(dto => dto.Title == "Test Movie"),
+        It.Is<AddLibraryItemDto>(dto => dto.Title == "Test Movie"),
         It.IsAny<string>()),
         Times.Once);
     Assert.True(saveTriggered);
@@ -67,7 +67,7 @@ public class AddItemModalTests : BunitContext
 
     await cut.Find("form").SubmitAsync();
 
-    mockService.Verify(s => s.AddItemFromDtoAsync(It.IsAny<LibraryItemDto>(), It.IsAny<string>()),
+    mockService.Verify(s => s.AddItemFromDtoAsync(It.IsAny<AddLibraryItemDto>(), It.IsAny<string>()),
         Times.Never);
 
     var validationMessage = cut.Find(".text-danger.small");

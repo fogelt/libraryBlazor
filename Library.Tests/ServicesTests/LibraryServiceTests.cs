@@ -60,7 +60,7 @@ public class LibraryServiceTests
   [Fact]
   public async Task AddItemFromDtoAsync_ShouldMapCorrectType_AndCallAdd()
   {
-    var dto = new LibraryItemDto { ISBN = "DVD-1", Title = "Movie", Author = "Director" };
+    var dto = new AddLibraryItemDto { ISBN = "DVD-1", Title = "Movie", Author = "Director" };
     _itemRepoMock.Setup(r => r.GetByIdAsync(dto.ISBN)).ReturnsAsync((LibraryItem?)null);
 
     await _service.AddItemFromDtoAsync(dto, "DVD");

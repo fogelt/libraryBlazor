@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Library.Core.DTOs;
 
-public class LibraryItemDto
+public class AddLibraryItemDto
 {
   [Required(ErrorMessage = "ISBN is required")]
   public string ISBN { get; set; } = "";
