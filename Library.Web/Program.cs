@@ -14,7 +14,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContextFactory<LibraryDbContext>(options =>
     options.UseSqlite("Data Source=library.db"));
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<LibraryService>();
 
 var app = builder.Build();

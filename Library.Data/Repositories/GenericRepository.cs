@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Data.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
   private readonly IDbContextFactory<LibraryDbContext> _dbFactory;
 
-  public Repository(IDbContextFactory<LibraryDbContext> dbFactory)
+  public GenericRepository(IDbContextFactory<LibraryDbContext> dbFactory)
   {
     _dbFactory = dbFactory;
   }

@@ -6,9 +6,9 @@ using Library.Core.Interfaces;
 namespace Library.Web.Services;
 
 public class LibraryService(
-    IRepository<LibraryItem> itemRepo,
-    IRepository<Member> memberRepo,
-    IRepository<Loan> loanRepo)
+    IGenericRepository<LibraryItem> itemRepo,
+    IGenericRepository<Member> memberRepo,
+    IGenericRepository<Loan> loanRepo)
 {
     //Membership functions
     public async Task<List<Member>> GetAllMembersAsync() => [.. (await memberRepo.GetAllAsync("Loans.Item")).OrderBy(m => m.Name)];

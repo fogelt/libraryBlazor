@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 namespace Library.Core.Interfaces;
 
-public interface IRepository<T> where T : class
+public interface IGenericRepository<T> where T : class
 {
   Task<IEnumerable<T>> GetAllAsync(params string[] includes);
   Task<T?> GetByIdAsync(string id);
